@@ -14,9 +14,11 @@ const featureSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "It must belongs to a user"],
   },
-  images: {
-    type: String,
-  },
+  images: [
+    {
+      type: String,
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now(),
