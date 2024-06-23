@@ -33,6 +33,7 @@ commentSchema.pre(/^find/,function(next){
         path:'user',
         select:'name'
     })
+    next()
 })
 const Comment = mongoose.model("Comment", commentSchema);
 module.exports = Comment;
