@@ -96,7 +96,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 exports.restrict = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return next(new appError("you don't have premission to this rout", 401));
+      return next(new appError("You don't have premission to this rout", 401));
     }
     next();
   };
@@ -122,13 +122,13 @@ exports.protect = catchAsync(async (req, res, next) => {
   // we might delete the user in between login and accessing
   const user = await User.findById(decoded.id);
   if (!user) {
-    return next(new appError("your acount has been deleted", 401));
+    return next(new appError("Your acount has been deleted", 401));
   }
   // 4)check that if user changed it's password or not
   if (user.changedPasswordAfter(decoded.iat)) {
     next(
       new appError(
-        "you recently changed your password.please login again!",
+        "You recently changed your password.please login again!",
         401
       )
     );
