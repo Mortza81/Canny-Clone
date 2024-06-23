@@ -25,5 +25,5 @@ const requestSchema = new mongoose.Schema({
     default: Date.now(),
   },
 });
-const Request = mongoose.model("request", requestSchema);
+const Request = mongoose.model("Request", requestSchema);
 module.exports = Request;
