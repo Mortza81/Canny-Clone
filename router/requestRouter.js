@@ -1,4 +1,4 @@
-const featureController = require("../controllers/featureController");
+const requestController = require("../controllers/requestController");
 const express = require("express");
 const authController = require("../controllers/authController");
 const router = express.Router();
@@ -7,14 +7,14 @@ router
   .post(
     authController.protect,
     authController.restrict("user"),
-    featureController.create
+    requestController.create
   )
   .get(
-    featureController.getAll
+    requestController.getAll
   );
 router
   .route("/:id")
-  .get(featureController.getOne)
-  .delete(authController.protect,featureController.delete)
-  .patch(authController.protect,featureController.update);
+  .get(requestController.getOne)
+  .delete(authController.protect,requestController.delete)
+  .patch(authController.protect,requestController.update);
 module.exports = router;

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const featureSchema = new mongoose.Schema({
+const requestSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Title is required"],
@@ -25,5 +25,5 @@ const featureSchema = new mongoose.Schema({
     default: Date.now(),
   },
 });
-const Feature = mongoose.model("Feature", featureSchema);
-module.exports = Feature;
+const Request = mongoose.model("request", requestSchema);
+module.exports = Request;
