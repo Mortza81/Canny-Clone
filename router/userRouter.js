@@ -11,4 +11,5 @@ router
   .delete(userController.deleteUser)
   .patch(userController.updateUser);
 router.post("/signup",authController.signup);
+router.post('/login',authController.login)
 module.exports = router;

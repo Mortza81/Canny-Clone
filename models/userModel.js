@@ -45,14 +45,16 @@ const userSchema = new mongoose.Schema({
   passwordResetTokenExpires: Date,
 });
 userSchema.pre("save", async function (next) {
-  if(this.isModified('password')){
-  this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfirm = undefined;
-  next()
-  }
-  else{
-    next()
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 12);
+    this.passwordConfirm = undefined;
+    next();
+  } else {
+    next();
   }
 });
+userSchema.methods.correctPassword = async function (orgPassword, hashedPassword) {
+  return await bcrypt.compare(orgPassword, hashedPassword);
+};
 const User = mongoose.model("User", userSchema);
 module.exports = User;
