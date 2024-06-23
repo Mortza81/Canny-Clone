@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 const featureSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: [true, "Title is required"],
+    maxlength: [20, "Title must have less or equal then 20 characters"],
+  },
   text: {
     type: String,
     required: [true, "Text is required"],
@@ -17,5 +22,5 @@ const featureSchema = new mongoose.Schema({
     default: Date.now(),
   },
 });
-const Feature = mongoose.model("Feature");
+const Feature = mongoose.model("Feature", featureSchema);
 module.exports = Feature;
