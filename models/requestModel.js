@@ -42,5 +42,5 @@ requestSchema.pre(/^find/, function (next) {
     select: "name",
   });
 });
-const Request = mongoose.model("Request", requestSchema);
+const Request = mongoose.model("request", requestSchema);
 module.exports = Request;
