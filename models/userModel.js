@@ -74,5 +74,15 @@ userSchema.methods.createResetTokenPassword = function () {
   this.passwordResetTokenExpires = Date.now() + 10 * 1000 * 60;
   return resetToken;
 };
+userSchema.methods.changedPasswordAfter = function (jwtiat) {
+  if (this.changedPasswordAt) {
+    const passwordChanged = parseInt(
+      this.changedPasswordAt.getTime() / 1000,
+      10,
+    )
+    return passwordChanged > jwtiat
+  }
+  return false
+}
 const User = mongoose.model("User", userSchema);
 module.exports = User;

@@ -93,3 +93,47 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
   createAndSendToken(user, 200, res);
 });
+exports.restrict = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new appError("you don't have premission to this rout", 401));
+    }
+    next();
+  };
+};
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1)checking if token exists
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+  if (!token) {
+    return next(
+      new appError("You are not logged in! Please log in to get access.", 401)
+    );
+  }
+  // 2)verifying
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  // we could just stop here but it's not safe
+  // 3)check if user still exists
+  // we might delete the user in between login and accessing
+  const user = await User.findById(decoded.id);
+  if (!user) {
+    return next(new appError("your acount has been deleted", 401));
+  }
+  // 4)check that if user changed it's password or not
+  if (user.changedPasswordAfter(decoded.iat)) {
+    next(
+      new appError(
+        "you recently changed your password.please login again!",
+        401
+      )
+    );
+  }
+  res.locals.user = user;
+  req.user = user;
+  next();
+});

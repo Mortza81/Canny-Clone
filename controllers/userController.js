@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const handlerFactory=require('./handlerFactory')
 exports.getAllusers = (req, res, next) => {
   res.status(200).json({
     status: "not implemented",
