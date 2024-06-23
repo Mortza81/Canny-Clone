@@ -13,7 +13,6 @@ function errorproduction(err, req, res) {
     })
 }
 function errordevelopment(err, req, res) {
-  // for api
     res.status(err.statusCode).json({
       message: err.message,
       stack: err.stack,
@@ -41,7 +40,6 @@ const hendleJWTError = () => new appError('Invalid token!.please login.', 401)
 const handleJWTExpiredError = () =>
   new appError('Your token has expired.please login again.', 401)
 module.exports = (err, req, res, next) => {
-  // console.log(err.stack);
   err.statusCode = err.statusCode || 500
   err.status = err.status || 'error'
 
