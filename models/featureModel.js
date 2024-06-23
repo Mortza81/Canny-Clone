@@ -5,7 +5,8 @@ const featureSchema = new mongoose.Schema({
     required: [true, "Title is required"],
     maxlength: [20, "Title must have less or equal then 20 characters"],
   },
-  text: {
+  category: String,
+  description: {
     type: String,
     required: [true, "Text is required"],
   },
