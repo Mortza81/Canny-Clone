@@ -2,8 +2,8 @@ const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appError");
 const handlerFactory = require("./handlerFactory");
 const Interaction = require("../models/interactionModel");
+const app = require("../app");
 exports.addInteraction = catchAsync(async (req, res, next) => {
-  // تعیین target_type بر اساس وجود requestid یا commentid
   req.body.user = req.user.id;
   if (req.params.requestId) {
     req.body.target_type = "Request";
@@ -43,6 +43,56 @@ exports.deleteInteraction = catchAsync(async (req, res, next) => {
 
   res.status(201).json({
     status: "success",
-    data:'null'
-  })
+    data: "null",
+  });
+});
+exports.getAllLikes = catchAsync(async (req, res, next) => {
+  const likes = await Interaction.find({ target_type: "Comment" });
+  res.status(200).json({
+    status: "success",
+    data: likes,
+  });
+});
+exports.getAllvotes = catchAsync(async (req, res, next) => {
+  const votes = await Interaction.find({ target_type: "Request" });
+  res.status(200).json({
+    status: "success",
+    data: votes,
+  });
+});
+exports.getOneLike = catchAsync(async (req, res, next) => {
+  const likes = await Interaction.find({ _id:req.params.id, target_type: "Comment" });
+  res.status(200).json({
+    status: "success",
+    data: likes,
+  });
+});
+exports.getOneVote = catchAsync(async (req, res, next) => {
+  const likes = await Interaction.find({ _id:req.params.id, target_type: "Request" });
+  res.status(200).json({
+    status: "success",
+    data: likes,
+  });
+});
+exports.deleteVote = catchAsync(async (req, res, next) => {
+  const vote = await Interaction.findById(req.params.id);
+  if (!vote) {
+    return next(new appError("There is no vote with this Id"));
+  }
+  await Interaction.findByIdAndDelete(vote.id)
+  res.status(201).json({
+    status: "success",
+    data: "null",
+  });
+});
+exports.deleteLike = catchAsync(async (req, res, next) => {
+  const like = await Interaction.findById(req.params.id);
+  if (!like) {
+    return next(new appError("There is no like with this Id"));
+  }
+  await Interaction.findByIdAndDelete(like.id)
+  res.status(201).json({
+    status: "success",
+    data: "null",
+  });
 });
