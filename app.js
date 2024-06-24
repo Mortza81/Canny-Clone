@@ -1,8 +1,10 @@
 const express = require("express");
 const appError = require("./utils/appError");
+const path=require('path')
 const globalErrorHandler = require("./controllers/errorController");
 const app = express();
 app.use(express.json({ limit: "10kb" }));
+app.use(express.static(path.join(__dirname, 'public')))
 app.use("/api/v1/users", require("./router/userRouter"));
 app.use("/api/v1/requests", require("./router/requestRouter"));
 app.use('/api/v1/comments',require('./router/commentRouter'))
