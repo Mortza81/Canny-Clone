@@ -35,6 +35,11 @@ const requestSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+requestSchema.virtual('comments', {
+  ref: 'Comment',
+  foreignField: 'request',
+  localField: '_id',
+})
 requestSchema.virtual("reviews", {
   ref: "Comment",
   foreignField: "request",

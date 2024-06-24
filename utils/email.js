@@ -8,12 +8,14 @@ module.exports=class Email{
   newTransport(){
     if(process.env.NODE_ENV=='production'){
       return nodemailer.createTransport({
-        service:'gmail',
-        auth:{
-          user:process.env.GMAIL_USER,
-          pass:process.env.GMAIL_PASSWORD
+        host: MAIL_HOST,
+        port: MAIL_PORT,
+        tls: true,
+        auth: {
+          user: MAIL_USER,
+          pass: MAIL_PASSWORD,
         }
-      })
+      });
     }
     return nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
