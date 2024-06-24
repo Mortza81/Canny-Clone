@@ -1,9 +1,19 @@
-const User = require("../models/userModel");
 const multer = require("multer");
 const sharp = require("sharp");
-const appError = require("../utils/appError");
+const User = require("../models/userModel");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const handlerFactory = require("./handlerFactory");
+
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) {
+      newObj[el] = obj[el];
+    }
+  });
+  return newObj;
+};
 exports.getAllusers = handlerFactory.getAll(User);
 exports.getOneuser = handlerFactory.getOne(User);
 exports.updateUser = handlerFactory.updateOne(User);
@@ -13,7 +23,7 @@ const multerFilter = (req, file, cb) => {
   if (file.mimetype.split("/")[0].startsWith("image")) {
     cb(null, true);
   } else {
-    cb(new appError("Not an image! Please upload only images.", 400), false);
+    cb(new AppError("Not an image! Please upload only images.", 400), false);
   }
 };
 const upload = multer({
@@ -33,7 +43,7 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 exports.uploadUserPhoto = upload.single("photo");
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
-    return next(new appError("This route is not for changing password", 400));
+    return next(new AppError("This route is not for changing password", 400));
   }
   const objFiltered = filterObj(req.body, "email", "name");
   objFiltered.photo = req.file.filename;
@@ -55,12 +65,3 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: "null",
   });
 });
-const filterObj = (obj, ...allowedFields) => {
-  let newObj = {};
-  Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) {
-      newObj[el] = obj[el];
-    }
-  });
-  return newObj;
-};

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+
 const userSchema = new mongoose.Schema({
   name: {
     required: [true, "Name is requied"],
@@ -42,15 +43,14 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false,
   },
-  photo:{
-    type:'String',
-    default:"default.jpg"
+  photo: {
+    type: "String",
+    default: "default.jpg",
   },
-  createdAt:{
-    type:Date,
-    default:Date.now()
-  }
-  ,
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
   passwordResetToken: String,
   passwordResetTokenExpires: Date,
 });
@@ -65,7 +65,7 @@ userSchema.pre("save", async function (next) {
 });
 userSchema.methods.correctPassword = async function (
   orgPassword,
-  hashedPassword
+  hashedPassword,
 ) {
   return await bcrypt.compare(orgPassword, hashedPassword);
 };
@@ -88,10 +88,10 @@ userSchema.methods.changedPasswordAfter = function (jwtiat) {
     const passwordChanged = parseInt(
       this.changedPasswordAt.getTime() / 1000,
       10,
-    )
-    return passwordChanged > jwtiat
+    );
+    return passwordChanged > jwtiat;
   }
-  return false
-}
+  return false;
+};
 const User = mongoose.model("User", userSchema);
 module.exports = User;

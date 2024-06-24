@@ -1,9 +1,14 @@
-const User = require("../models/userModel");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
 const Email = require("../utils/email");
 const catchAsync = require("../utils/catchAsync");
-const appError = require("../utils/appError");
+const AppError = require("../utils/AppError");
+
+const signjwt = (id) =>
+  jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES,
+  });
 const createAndSendToken = (user, statusCode, res) => {
   const token = signjwt(user._id);
   user.password = undefined;
@@ -15,11 +20,7 @@ const createAndSendToken = (user, statusCode, res) => {
     },
   });
 };
-const signjwt = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES,
-  });
-};
+
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -32,18 +33,18 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new appError("Please provide email and password!", 404));
+    return next(new AppError("Please provide email and password!", 404));
   }
   const user = await User.findOne({ email }).select("+password");
   if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new appError("Wrong email or password", 401));
+    return next(new AppError("Wrong email or password", 401));
   }
   createAndSendToken(user, 200, res);
 });
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    return next(new appError("there is no user with this email", 401));
+    return next(new AppError("there is no user with this email", 401));
   }
   const resetToken = user.createResetTokenPassword();
   await user.save({ validateBeforeSave: false });
@@ -59,7 +60,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     // })
     await new Email(user).send(
       message,
-      "Your reset Token(valid for 10 minutes)"
+      "Your reset Token(valid for 10 minutes)",
     );
     res.status(200).json({
       status: "success",
@@ -69,8 +70,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetTokenExpires = undefined;
     user.passwordResetToken = undefined;
     await user.save({ validateBeforeSave: false });
-    console.log(err);
-    return next(new appError("there was a problem sending the email", 500));
+    return next(new AppError("there was a problem sending the email", 500));
   }
 });
 exports.resetPassword = catchAsync(async (req, res, next) => {
@@ -83,7 +83,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetTokenExpires: { $gt: Date.now() },
   });
   if (!user) {
-    return next(new appError("invalid or exired token", 400));
+    return next(new AppError("invalid or exired token", 400));
   }
 
   user.password = req.body.password;
@@ -93,14 +93,14 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
   createAndSendToken(user, 200, res);
 });
-exports.restrict = (...roles) => {
-  return (req, res, next) => {
+exports.restrict =
+  (...roles) =>
+  (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return next(new appError("You don't have premission to this rout", 401));
+      return next(new AppError("You don't have premission to this rout", 401));
     }
     next();
   };
-};
 exports.protect = catchAsync(async (req, res, next) => {
   // 1)checking if token exists
   let token;
@@ -112,7 +112,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   if (!token) {
     return next(
-      new appError("You are not logged in! Please log in to get access.", 401)
+      new AppError("You are not logged in! Please log in to get access.", 401),
     );
   }
   // 2)verifying
@@ -122,15 +122,15 @@ exports.protect = catchAsync(async (req, res, next) => {
   // we might delete the user in between login and accessing
   const user = await User.findById(decoded.id);
   if (!user) {
-    return next(new appError("Your acount has been deleted", 401));
+    return next(new AppError("Your acount has been deleted", 401));
   }
   // 4)check that if user changed it's password or not
   if (user.changedPasswordAfter(decoded.iat)) {
     next(
-      new appError(
+      new AppError(
         "You recently changed your password.please login again!",
-        401
-      )
+        401,
+      ),
     );
   }
   res.locals.user = user;

@@ -1,24 +1,23 @@
-const requestController = require("../controllers/requestController");
-const interactionController=require('../controllers/interactionController')
 const express = require("express");
+const requestController = require("../controllers/requestController");
 const authController = require("../controllers/authController");
+
 const router = express.Router();
-router.use('/:requestId/vote',require('./interactionsRouter'))
-router.use('/:requestId/comments',require('./commentRouter'))
+router.use("/:requestId/vote", require("./interactionsRouter"));
+router.use("/:requestId/comments", require("./commentRouter"));
+
 router
   .route("/")
   .post(
     authController.protect,
     requestController.uploadRequestImages,
     requestController.resizeRequestImages,
-    requestController.create
+    requestController.create,
   )
-  .get(
-    requestController.getAll
-  );
+  .get(requestController.getAll);
 router
   .route("/:id")
   .get(requestController.getOne)
-  .delete(authController.protect,requestController.delete)
-  .patch(authController.protect,requestController.update);
+  .delete(authController.protect, requestController.delete)
+  .patch(authController.protect, requestController.update);
 module.exports = router;

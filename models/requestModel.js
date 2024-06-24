@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const requestSchema = new mongoose.Schema(
   {
     title: {
@@ -25,15 +26,15 @@ const requestSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    votes:{
-      type:Number,
-      default:0
-    }
+    votes: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 requestSchema.virtual("reviews", {
   ref: "Comment",
@@ -45,7 +46,7 @@ requestSchema.pre(/^find/, function (next) {
     path: "user",
     select: "name",
   });
-  next()
+  next();
 });
 const Request = mongoose.model("request", requestSchema);
 module.exports = Request;

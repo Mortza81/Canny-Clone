@@ -1,8 +1,10 @@
-const Request = require("../models/requestModel");
-const handlerFactory = require("./handlerFactory");
 const multer = require("multer");
 const sharp = require("sharp");
+const AppError = require("../utils/AppError");
+const Request = require("../models/requestModel");
+const handlerFactory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
+
 exports.create = handlerFactory.createOne(Request);
 exports.getAll = handlerFactory.getAll(Request);
 exports.update = handlerFactory.updateOne(Request);
@@ -13,7 +15,7 @@ const multerFilter = (req, file, cb) => {
   if (file.mimetype.split("/")[0].startsWith("image")) {
     cb(null, true);
   } else {
-    cb(new appError("Not an image! Please upload only images.", 400), false);
+    cb(new AppError("Not an image! Please upload only images.", 400), false);
   }
 };
 const upload = multer({
@@ -23,7 +25,7 @@ const upload = multer({
 exports.uploadRequestImages = upload.fields([{ name: "images", maxCount: 2 }]);
 exports.resizeRequestImages = catchAsync(async (req, res, next) => {
   if (!req.files.images) return next();
-  req.body.images=[]
+  req.body.images = [];
   await Promise.all(
     req.files.images.map(async (file, index) => {
       const filename = `request-${req.body.title}-${Date.now()}-${index + 1}.jpeg`;
@@ -33,7 +35,7 @@ exports.resizeRequestImages = catchAsync(async (req, res, next) => {
         .jpeg({ quality: 90 })
         .toFile(`public/img/requests/${filename}`);
       req.body.images.push(filename);
-    })
+    }),
   );
   next();
 });
