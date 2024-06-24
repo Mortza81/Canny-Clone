@@ -1,4 +1,5 @@
 const appError = require('../utils/appError')
+const multer=require('multer')
 function errorproduction(err, req, res) {
     if (err.isOperational) {
       return res.status(err.statusCode).json({
@@ -18,6 +19,19 @@ function errordevelopment(err, req, res) {
       stack: err.stack,
       error: err,
     })
+}
+function handleMulterError(err) {
+  let message;
+  if (err.code === 'LIMIT_FILE_SIZE') {
+      message = 'File size is too large. Maximum size allowed is 5MB.';
+  } else if (err.code === 'LIMIT_FILE_COUNT') {
+      message = 'Maximum number of files exceeded. Only 10 files are allowed.';
+  } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      message = `You can only upload two images.`;
+  } else {
+      message = 'An error occurred during file upload.';
+  }
+  return new appError(message, 400);
 }
 function handleCastError(err) {
   return new appError(`Invalid ${err.path}: ${err.value}`, 404)
@@ -60,6 +74,8 @@ module.exports = (err, req, res, next) => {
     }
     if (err.name == 'TokenExpiredError') {
       err = handleJWTExpiredError()
+    }
+    if (err instanceof multer.MulterError) {err = handleMulterError(err);
     }
     errorproduction(err, req, res)
   }
