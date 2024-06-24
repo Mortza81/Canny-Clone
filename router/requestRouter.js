@@ -4,6 +4,7 @@ const express = require("express");
 const authController = require("../controllers/authController");
 const router = express.Router();
 router.use('/:requestId/vote',require('./interactionsRouter'))
+router.use('/:requestId/comments',require('./commentRouter'))
 router
   .route("/")
   .post(

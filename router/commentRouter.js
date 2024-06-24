@@ -2,15 +2,16 @@ const express=require('express')
 const commentController=require('../controllers/commentController')
 const interactionController=require('../controllers/interactionController')
 const authController=require('../controllers/authController')
-const router=express.Router()
+const router=express.Router({mergeParams:true})
 router.use('/:commentId/like',require('./interactionsRouter'))
 router
   .route("/")
   .post(
     authController.protect,
     commentController.uploadCommentImages,
-    commentController.resizeCommentImages
-    ,commentController.create
+    commentController.resizeCommentImages,
+    commentController.setUserIdAndRequestId,
+    commentController.create
   )
   .get(
     commentController.getAll
