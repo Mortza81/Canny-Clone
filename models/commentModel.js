@@ -20,7 +20,11 @@ const commentSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    images:[String]
+    images:[String],
+    likes:{
+      type:Number,
+      default:0
+    }
   },
   {
     toJSON: { virtuals: true },

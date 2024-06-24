@@ -25,6 +25,10 @@ const requestSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
+    votes:{
+      type:Number,
+      default:0
+    }
   },
   {
     toJSON: { virtuals: true },
