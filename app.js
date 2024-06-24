@@ -3,6 +3,7 @@ const appError = require("./utils/appError");
 const path=require('path')
 const globalErrorHandler = require("./controllers/errorController");
 const app = express();
+const morgan=require('morgan')
 app.use(express.json({ limit: "10kb" }));
 app.use(express.static(path.join(__dirname, 'public')))
 app.use("/api/v1/users", require("./router/userRouter"));

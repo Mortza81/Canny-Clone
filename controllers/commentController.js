@@ -10,7 +10,7 @@ exports.delete = handlerFactory.deleteOne(Comment);
 exports.getOne = handlerFactory.getOne(Comment);
 exports.setUserIdAndRequestId=catchAsync(async (req,res,next)=>{
   if(!req.body.user) req.body.user=req.user.id
-  if(!req.body.target) req.body.request=req.params.requestId
+  if(!req.body.request) req.body.request=req.params.requestId
   next()
 })
 const multerStorage = multer.memoryStorage();
@@ -27,7 +27,7 @@ const upload = multer({
 });
 exports.uploadCommentImages = upload.fields([{ name: "images", maxCount: 2 }]);
 exports.resizeCommentImages = catchAsync(async (req, res, next) => {
-  if (!req.files) return next();
+  if (!req.files || !req.files.images) return next();
   req.body.images = [];
   await Promise.all(
     req.files.images.map(async (file, index) => {

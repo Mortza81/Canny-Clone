@@ -20,8 +20,7 @@ exports.updateOne = (Model) =>
     })
   })
 exports.createOne = (Model) =>
-  catchAsync(async (req, res) => {
-    console.log(req.body);
+  catchAsync(async (req, res,next) => {
     const doc = await Model.create(req.body)
     res.status(201).json({
       status: 'success',
@@ -30,7 +29,8 @@ exports.createOne = (Model) =>
   })
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    const features = new APIFeatures(Model.find(), req.query)
+    if (req.params.requestId) filter = { request: req.params.requestId }
+    const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .limitFields()
       .paginate()
