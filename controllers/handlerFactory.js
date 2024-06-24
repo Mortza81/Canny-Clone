@@ -29,6 +29,7 @@ exports.createOne = (Model) =>
   })
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
+    let filter;
     if (req.params.requestId) filter = { request: req.params.requestId }
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()

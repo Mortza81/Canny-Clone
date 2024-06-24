@@ -4,9 +4,7 @@ process.on('uncaughtException', (err) => {
   process.exit(1)
 })
 const app = require("./app");
-const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-dotenv.config();
 mongoose.connect(process.env.DB_URL).then((con) => {
   console.log("let's go");
 });
