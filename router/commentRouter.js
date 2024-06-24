@@ -3,12 +3,14 @@ const commentController=require('../controllers/commentController')
 const interactionController=require('../controllers/interactionController')
 const authController=require('../controllers/authController')
 const router=express.Router()
+router.use('/:commentId/like',require('./interactionsRouter'))
 router
   .route("/")
   .post(
     authController.protect,
-    authController.restrict("user"),
-    commentController.create
+    commentController.uploadCommentImages,
+    commentController.resizeCommentImages
+    ,commentController.create
   )
   .get(
     commentController.getAll
