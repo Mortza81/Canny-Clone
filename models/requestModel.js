@@ -7,6 +7,13 @@ const requestSchema = new mongoose.Schema(
       required: [true, "Title is required"],
       maxlength: [20, "Title must have less or equal then 20 characters"],
     },
+    status: {
+      enum: {
+        values: ["in progress", "planned", "under review"],
+        message: "status must be either: in progress, planned or review.",
+      },
+      type: String,
+    },
     category: String,
     description: {
       type: String,

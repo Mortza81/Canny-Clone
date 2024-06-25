@@ -39,3 +39,19 @@ exports.resizeRequestImages = catchAsync(async (req, res, next) => {
   );
   next();
 });
+exports.setStatus = catchAsync(async (req, res, next) => {
+  const request = await Request.findByIdAndUpdate(
+    req.params.id,
+    {
+      status: req.body.status,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+  res.status(200).json({
+    status: "success",
+    data: request,
+  });
+});

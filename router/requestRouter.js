@@ -20,4 +20,10 @@ router
   .get(requestController.getOne)
   .delete(authController.protect, requestController.delete)
   .patch(authController.protect, requestController.update);
+router.patch(
+  "/setStatus/:id",
+  authController.protect,
+  authController.restrict("admin"),
+  requestController.setStatus,
+);
 module.exports = router;
