@@ -4,17 +4,23 @@ const AppError = require("../utils/AppError");
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    if (req.user.role === 'admin') {
+    let query;
+    if (req.user.role === "admin") {
       query = Model.findByIdAndDelete(req.params.id);
     } else {
       query = Model.findOneAndDelete({
         _id: req.params.id,
-        user: req.user.id
+        user: req.user.id,
       });
     }
     const doc = await query;
     if (!doc) {
-      return next(new AppError("Data not found or you do not have the necessary permissions", 404));
+      return next(
+        new AppError(
+          "Data not found or you do not have the necessary permissions",
+          404,
+        ),
+      );
     }
     res.status(201).json({
       status: "success",
@@ -23,17 +29,33 @@ exports.deleteOne = (Model) =>
   });
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    if (req.user.role === 'admin') {
-      query = Model.findByIdAndDelete(req.params.id);
-    } else {
-      query = Model.findOneAndDelete({
-        _id: req.params.id,
-        user: req.user.id
+    let query;
+    if (req.user.role === "admin") {
+      query = Model.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
       });
+    } else {
+      query = Model.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          user: req.user.id,
+        },
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+        },
+      );
     }
     const doc = await query;
     if (!doc) {
-      return next(new AppError("Data not found or you do not have the necessary permissions", 404));
+      return next(
+        new AppError(
+          "Data not found or you do not have the necessary permissions",
+          404,
+        ),
+      );
     }
     res.status(200).json({
       status: "success",
