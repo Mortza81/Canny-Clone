@@ -60,6 +60,7 @@ const userSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetTokenExpires: Date,
 });
+userSchema.index({ verifyTokenExpires: 1 }, { expireAfterSeconds: 0 });
 userSchema.pre("find", async function (next) {
   this.find({ verified: { $ne: false } });
 });
