@@ -93,5 +93,9 @@ userSchema.methods.changedPasswordAfter = function (jwtiat) {
   }
   return false;
 };
+userSchema.pre(/^find/,function(next){
+  this.find({isActive:{$ne:false}})
+  next()
+})
 const User = mongoose.model("User", userSchema);
 module.exports = User;

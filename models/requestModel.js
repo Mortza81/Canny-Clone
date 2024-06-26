@@ -43,7 +43,7 @@ const requestSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
-requestSchema.virtual("reviews", {
+requestSchema.virtual("comments", {
   ref: "Comment",
   foreignField: "request",
   localField: "_id",
@@ -51,7 +51,7 @@ requestSchema.virtual("reviews", {
 requestSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
-    select: "name",
+    select: "name photo",
   });
   next();
 });

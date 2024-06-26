@@ -9,7 +9,7 @@ exports.create = handlerFactory.createOne(Request);
 exports.getAll = handlerFactory.getAll(Request);
 exports.update = handlerFactory.updateOne(Request);
 exports.delete = handlerFactory.deleteOne(Request);
-exports.getOne = handlerFactory.getOne(Request);
+exports.getOne = handlerFactory.getOne(Request, { path: "comments" });
 const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.split("/")[0].startsWith("image")) {

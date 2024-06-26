@@ -1,9 +1,21 @@
 const catchAsync = require("../utils/catchAsync");
 const APIFeatures = require("../utils/APIFeatures");
+const AppError = require("../utils/AppError");
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    await Model.findByIdAndDelete(req.params.id);
+    if (req.user.role === 'admin') {
+      query = Model.findByIdAndDelete(req.params.id);
+    } else {
+      query = Model.findOneAndDelete({
+        _id: req.params.id,
+        user: req.user.id
+      });
+    }
+    const doc = await query;
+    if (!doc) {
+      return next(new AppError("Data not found or you do not have the necessary permissions", 404));
+    }
     res.status(201).json({
       status: "success",
       data: null,
@@ -11,10 +23,18 @@ exports.deleteOne = (Model) =>
   });
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    if (req.user.role === 'admin') {
+      query = Model.findByIdAndDelete(req.params.id);
+    } else {
+      query = Model.findOneAndDelete({
+        _id: req.params.id,
+        user: req.user.id
+      });
+    }
+    const doc = await query;
+    if (!doc) {
+      return next(new AppError("Data not found or you do not have the necessary permissions", 404));
+    }
     res.status(200).json({
       status: "success",
       data: doc,
@@ -22,6 +42,7 @@ exports.updateOne = (Model) =>
   });
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    req.body.user = req.user.id;
     const doc = await Model.create(req.body);
     res.status(201).json({
       status: "success",
@@ -41,7 +62,7 @@ exports.getAll = (Model) =>
     res.status(200).json({
       status: "success",
       result: doc.length,
-      data: [doc],
+      data: doc,
     });
   });
 exports.getOne = (Model, populateOptions) =>

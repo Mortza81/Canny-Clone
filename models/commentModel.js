@@ -35,7 +35,7 @@ commentSchema.index({ request: 1, user: 1 }, { unique: true });
 commentSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
-    select: "name",
+    select: "name photo",
   });
   next();
 });
