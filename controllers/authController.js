@@ -28,7 +28,42 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-  createAndSendToken(newUser, 201, res);
+  try {
+    const verifyToken = newUser.createVerifyTokenPassword();
+    await newUser.save({ validateBeforeSave: false });
+    const message = `please send patch request to ${
+      req.protocol
+    }://${req.get("host")}/api/v1/users/verify/${verifyToken}`;
+    await new Email(newUser).send(
+      message,
+      "Your verify token(valid for 10 minutes)",
+    );
+    res.status(200).json({
+      status: "success",
+      message: "verify token sent to your email",
+    });
+  } catch (err) {
+    await User.findByIdAndDelete(newUser.id);
+    return next(new AppError("there was a problem sending the email", 500));
+  }
+});
+exports.verify = catchAsync(async (req, res, next) => {
+  const token = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+  const user = await User.findOne({
+    verifyToken: token,
+    verifyTokenExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new AppError("invalid or expired token", 400));
+  }
+  user.verified = true;
+  user.verifyToken = undefined;
+  user.verifyTokenExpires = undefined;
+  await user.save({ validateBeforeSave: false });
+  createAndSendToken(user, 200, res);
 });
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;

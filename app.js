@@ -8,12 +8,12 @@ const xss = require("xss-clean");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const path = require("path");
+const fs = require("fs");
 const AppError = require("./utils/AppError");
-const fs=require('fs')
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "access.log"),
-  { flags: "a" }
+  { flags: "a" },
 );
 const app = express();
 const globalErrorHandler = require("./controllers/errorController");
@@ -21,7 +21,7 @@ const globalErrorHandler = require("./controllers/errorController");
 dotenv.config();
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
-}else{
+} else {
   app.use(morgan("combined", { stream: accessLogStream }));
 }
 app.use(compression());

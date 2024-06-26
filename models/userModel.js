@@ -51,8 +51,17 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  verified: {
+    type: String,
+    default: false,
+  },
+  verifyToken: String,
+  verifyTokenExpires: Date,
   passwordResetToken: String,
   passwordResetTokenExpires: Date,
+});
+userSchema.pre("find", async function (next) {
+  this.find({ verified: { $ne: false } });
 });
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
@@ -82,6 +91,12 @@ userSchema.methods.createResetTokenPassword = function () {
     .digest("hex");
   this.passwordResetTokenExpires = Date.now() + 10 * 1000 * 60;
   return resetToken;
+};
+userSchema.methods.createVerifyTokenPassword = function () {
+  const token = crypto.randomBytes(6).toString("hex");
+  this.verifyToken = crypto.createHash("sha256").update(token).digest("hex");
+  this.verifyTokenExpires = Date.now() + 10 * 1000 * 60;
+  return token;
 };
 userSchema.methods.changedPasswordAfter = function (jwtiat) {
   if (this.changedPasswordAt) {
