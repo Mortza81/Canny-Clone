@@ -4,16 +4,13 @@ const AppError = require("../utils/AppError");
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    let query;
-    if (req.user.role === "admin") {
-      query = Model.findByIdAndDelete(req.params.id);
-    } else {
-      query = Model.findOneAndDelete({
-        _id: req.params.id,
-        user: req.user.id,
-      });
-    }
-    const doc = await query;
+    const filter =
+      req.user.role === "admin"
+        ? { _id: req.params.id }
+        : { _id: req.params.id, user: req.user.id };
+
+    const doc = await Model.findOneAndDelete(filter);
+
     if (!doc) {
       return next(
         new AppError(
@@ -22,6 +19,7 @@ exports.deleteOne = (Model) =>
         ),
       );
     }
+
     res.status(201).json({
       status: "success",
       data: null,
@@ -29,26 +27,16 @@ exports.deleteOne = (Model) =>
   });
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    let query;
-    if (req.user.role === "admin") {
-      query = Model.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-      });
-    } else {
-      query = Model.findOneAndUpdate(
-        {
-          _id: req.params.id,
-          user: req.user.id,
-        },
-        req.body,
-        {
-          new: true,
-          runValidators: true,
-        },
-      );
-    }
-    const doc = await query;
+    const filter =
+      req.user.role === "admin"
+        ? { _id: req.params.id }
+        : { _id: req.params.id, user: req.user.id };
+
+    const doc = await Model.findOneAndUpdate(filter, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
     if (!doc) {
       return next(
         new AppError(
@@ -57,6 +45,7 @@ exports.updateOne = (Model) =>
         ),
       );
     }
+
     res.status(200).json({
       status: "success",
       data: doc,
