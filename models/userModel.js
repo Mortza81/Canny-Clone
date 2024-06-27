@@ -73,6 +73,7 @@ const userSchema = new mongoose.Schema({
 userSchema.index({ verifyTokenExpires: 1 }, { expireAfterSeconds: 0 });
 userSchema.pre("find", async function (next) {
   this.find({ verified: { $ne: false } });
+  next()
 });
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
