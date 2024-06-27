@@ -19,7 +19,17 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Password is required"],
-    minlength: [8, "Your password should have more than 8 characters"],
+    validate: {
+      validator: function (val) {
+        return validator.isStrongPassword(val, {
+          minLength: 8,
+          minLowercase: 1,
+          minNumbers: 1,
+        });
+      },
+      message:
+        "The password must be at least 8 characters long and contain at least one number.",
+    },
     select: false,
   },
   passwordConfirm: {
