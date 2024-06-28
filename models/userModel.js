@@ -5,46 +5,22 @@ const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema({
   name: {
-    required: [true, "Name is requied"],
     type: String,
-    maxlength: [20, "Name must have less or equal then 20 characters"],
   },
   email: {
     type: String,
-    validate: [validator.isEmail, "Your email is not valid"],
-    required: [true, "Email is required"],
     unique: true,
     lowercase: true,
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
-    validate: {
-      validator: function (val) {
-        return validator.isStrongPassword(val, {
-          minLength: 8,
-          minLowercase: 1,
-          minNumbers: 1,
-        });
-      },
-      message:
-        "The password must be at least 8 characters long and contain at least one number.",
-    },
     select: false,
   },
   passwordConfirm: {
     type: String,
-    required: [true, "Please confirm your password"],
-    validate: {
-      validator: function (val) {
-        return val === this.password;
-      },
-      message: "Your password and your passwordconfirm are not match",
-    },
   },
   changedPasswordAt: Date,
   role: {
-    enum: ["admin", "user"],
     type: String,
     default: "user",
   },
@@ -54,7 +30,7 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
   photo: {
-    type: "String",
+    type: String,
     default: "default.jpg",
   },
   createdAt: {

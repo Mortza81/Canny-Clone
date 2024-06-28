@@ -4,6 +4,7 @@ const User = require("../models/userModel");
 const Email = require("../utils/email");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/AppError");
+const {signup,login}=require('../validations/authValidation')
 
 const signjwt = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -22,6 +23,10 @@ const createAndSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  const { error } = signup.validate(req.body);
+  if (error) {
+    return next(new AppError(error.message, 400));
+  }
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -66,10 +71,11 @@ exports.verify = catchAsync(async (req, res, next) => {
   createAndSendToken(user, 200, res);
 });
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return next(new AppError("Please provide email and password!", 404));
+  const { error } = login.validate(req.body);
+  if (error) {
+    return next(new AppError(error.message, 400));
   }
+  const { email, password } = req.body;
   const user = await User.findOne({ email }).select("+password");
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Wrong email or password", 401));
