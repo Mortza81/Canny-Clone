@@ -24,6 +24,8 @@ router
   .delete(authController.protect, requestController.delete)
   .patch(
     authController.protect,
+    requestController.uploadRequestImages,
+    requestController.resizeRequestImages,
     Validation.validateupdateRequest,
     requestController.update,
   );

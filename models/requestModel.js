@@ -35,6 +35,7 @@ const requestSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
+requestSchema.index({ title: 1, user: 1 }, { unique: true });
 requestSchema.virtual("comments", {
   ref: "Comment",
   foreignField: "request",

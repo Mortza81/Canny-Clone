@@ -53,7 +53,6 @@ exports.updateOne = (Model) =>
   });
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    console.log('dsa');
     req.body.user = req.user.id;
     const doc = await Model.create(req.body);
     res.status(201).json({
