@@ -20,7 +20,7 @@ exports.deleteOne = (Model) =>
       );
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: "success",
       data: null,
     });
