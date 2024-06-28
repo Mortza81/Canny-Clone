@@ -85,11 +85,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
 
   try {
-    // await email({
-    //   email: user.email,
-    //   subject: 'Your reset Token(valid for 10 minutes)',
-    //   message,
-    // })
     await new Email(user).send(
       message,
       "Your reset Token(valid for 10 minutes)",
