@@ -5,6 +5,10 @@ const Request = require("../models/requestModel");
 const handlerFactory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 
+exports.setUserId = catchAsync(async (req, res, next) => {
+  if (!req.body.user) req.body.user = req.user.id;
+  next();
+});
 exports.create = handlerFactory.createOne(Request);
 exports.getAll = handlerFactory.getAll(Request);
 exports.update = handlerFactory.updateOne(Request);

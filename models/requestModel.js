@@ -4,25 +4,17 @@ const requestSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, "Title is required"],
-      maxlength: [20, "Title must have less or equal then 20 characters"],
     },
     status: {
-      enum: {
-        values: ["in progress", "planned", "under review"],
-        message: "status must be either: in progress, planned or review.",
-      },
       type: String,
     },
     category: String,
     description: {
       type: String,
-      required: [true, "Text is required"],
     },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: [true, "It must belongs to a user"],
     },
     images: [
       {

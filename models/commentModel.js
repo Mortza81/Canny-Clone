@@ -5,16 +5,13 @@ const commentSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: [true, "Comment must belong to a user"],
     },
     request: {
       type: mongoose.Schema.ObjectId,
       ref: "Request",
-      required: [true, "Comment must belong to a request"],
     },
     body: {
       type: String,
-      required: [true, "Your comment should have a body text"],
     },
     createdAt: {
       type: Date,
