@@ -60,7 +60,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, {
     isActive: "false",
   });
-  res.status(204).json({
+  res.status(200).json({
     status: "success",
     data: "null",
   });
