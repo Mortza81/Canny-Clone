@@ -30,7 +30,6 @@ exports.signup = Joi.object(authValidation)
       "any.unknown": "Not allowed field: role",
     }),
   )
-  .unknown(true);
 exports.login = Joi.object(authValidation).fork(
   ["name", "passwordConfirm"],
   (schema) => schema.optional(),

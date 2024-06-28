@@ -33,7 +33,7 @@ exports.resizeCommentImages = catchAsync(async (req, res, next) => {
   req.body.images = [];
   await Promise.all(
     req.files.images.map(async (file, index) => {
-      const filename = `request-${req.body.title}-${Date.now()}-${
+      const filename = `comment-${req.user.id}-${Date.now()}-${
         index + 1
       }.jpeg`;
       await sharp(file.buffer)

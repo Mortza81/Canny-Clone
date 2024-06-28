@@ -1,6 +1,8 @@
 const catchAsync = require("../utils/catchAsync");
 const APIFeatures = require("../utils/APIFeatures");
 const AppError = require("../utils/AppError");
+const {createComment,updateComment}=require('../validations/commentValdiation')
+const Comment=require('../models/commentModel')
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -53,6 +55,14 @@ exports.updateOne = (Model) =>
   });
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    console.log('dsa');
+    if(Model==Comment){
+      console.log('fasfasdasd');
+      const {error}=createComment.validate(req.body)
+      if(error){
+        return next(new AppError(error,400))
+      }
+    }
     req.body.user = req.user.id;
     const doc = await Model.create(req.body);
     res.status(201).json({

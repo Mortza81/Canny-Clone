@@ -4,7 +4,6 @@ const User = require("../models/userModel");
 const Email = require("../utils/email");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/AppError");
-const {signup,login}=require('../validations/authValidation')
 
 const signjwt = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -23,10 +22,6 @@ const createAndSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const { error } = signup.validate(req.body);
-  if (error) {
-    return next(new AppError(error.message, 400));
-  }
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -71,10 +66,6 @@ exports.verify = catchAsync(async (req, res, next) => {
   createAndSendToken(user, 200, res);
 });
 exports.login = catchAsync(async (req, res, next) => {
-  const { error } = login.validate(req.body);
-  if (error) {
-    return next(new AppError(error.message, 400));
-  }
   const { email, password } = req.body;
   const user = await User.findOne({ email }).select("+password");
   if (!user || !(await user.correctPassword(password, user.password))) {
@@ -126,7 +117,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError("invalid or exired token", 400));
   }
-
+  if(req.body.password!= req.body.passwordConfirm){
+    return next(new AppError('Your password and your passwordConfirm are not match',400))
+  }
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
