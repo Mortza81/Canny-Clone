@@ -1,7 +1,7 @@
 const { signup, login } = require("./authValidation");
 const { createComment, updateComment } = require("./commentValdiation");
 const {createRequest,updateRequest,setStatus}=require('./requestValidation')
-const AppError = require("../utils/AppError");
+const AppError = require("../utils/appError");
 class Validation {
   validatecreateComment(req,res,next) {
     const { error } = createComment.validate(req.body);
