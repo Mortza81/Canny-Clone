@@ -9,7 +9,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const path = require("path");
 const fs = require("fs");
-const AppError = require("./utils/AppError");
+const AppError = require("./utils/appError");
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "access.log"),

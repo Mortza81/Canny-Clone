@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Email = require("../utils/email");
 const catchAsync = require("../utils/catchAsync");
-const AppError = require("../utils/AppError");
+const AppError = require("../utils/appError");
 
 const signjwt = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -67,9 +67,6 @@ exports.verify = catchAsync(async (req, res, next) => {
 });
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return next(new AppError("Please provide email and password!", 404));
-  }
   const user = await User.findOne({ email }).select("+password");
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Wrong email or password", 401));
@@ -115,7 +112,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError("invalid or exired token", 400));
   }
-
+  if(req.body.password!= req.body.passwordConfirm){
+    return next(new AppError('Your password and your passwordConfirm are not match',400))
+  }
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;

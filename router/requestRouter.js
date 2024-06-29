@@ -1,6 +1,7 @@
 const express = require("express");
 const requestController = require("../controllers/requestController");
 const authController = require("../controllers/authController");
+const Validation = require("../validations/Validation");
 
 const router = express.Router();
 router.use("/:requestId/vote", require("./interactionsRouter"));
@@ -12,6 +13,8 @@ router
     authController.protect,
     requestController.uploadRequestImages,
     requestController.resizeRequestImages,
+    requestController.setUserId,
+    Validation.validateCreateRequest,
     requestController.create,
   )
   .get(requestController.getAll);
@@ -19,11 +22,18 @@ router
   .route("/:id")
   .get(requestController.getOne)
   .delete(authController.protect, requestController.delete)
-  .patch(authController.protect, requestController.update);
+  .patch(
+    authController.protect,
+    requestController.uploadRequestImages,
+    requestController.resizeRequestImages,
+    Validation.validateupdateRequest,
+    requestController.update,
+  );
 router.patch(
   "/setStatus/:id",
   authController.protect,
   authController.restrict("admin"),
+  Validation.validateSetStatus,
   requestController.setStatus,
 );
 module.exports = router;

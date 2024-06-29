@@ -1,6 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const APIFeatures = require("../utils/APIFeatures");
-const AppError = require("../utils/AppError");
+const AppError = require("../utils/appError");
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -19,7 +19,8 @@ exports.deleteOne = (Model) =>
         ),
       );
     }
-    res.status(201).json({
+
+    res.status(200).json({
       status: "success",
       data: null,
     });

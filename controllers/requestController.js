@@ -1,10 +1,14 @@
 const multer = require("multer");
 const sharp = require("sharp");
-const AppError = require("../utils/AppError");
+const AppError = require("../utils/appError");
 const Request = require("../models/requestModel");
 const handlerFactory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 
+exports.setUserId = catchAsync(async (req, res, next) => {
+  if (!req.body.user) req.body.user = req.user.id;
+  next();
+});
 exports.create = handlerFactory.createOne(Request);
 exports.getAll = handlerFactory.getAll(Request);
 exports.update = handlerFactory.updateOne(Request);
@@ -24,7 +28,8 @@ const upload = multer({
 });
 exports.uploadRequestImages = upload.fields([{ name: "images", maxCount: 2 }]);
 exports.resizeRequestImages = catchAsync(async (req, res, next) => {
-  if (!req.files.images) return next();
+  if (!req.files || !req.files.images) return next();
+  else{
   req.body.images = [];
   await Promise.all(
     req.files.images.map(async (file, index) => {
@@ -37,6 +42,7 @@ exports.resizeRequestImages = catchAsync(async (req, res, next) => {
       req.body.images.push(filename);
     }),
   );
+}
   next();
 });
 exports.setStatus = catchAsync(async (req, res, next) => {

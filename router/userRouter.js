@@ -1,8 +1,8 @@
 const express = require("express");
 const userController = require("../controllers/userController");
-
 const router = express.Router();
 const authController = require("../controllers/authController");
+const Validation=require('../validations/Validation')
 
 router.get(
   "/",
@@ -36,9 +36,9 @@ router
     authController.restrict("admin"),
     userController.updateUser,
   );
-router.post("/signup", authController.signup);
-router.post("/login", authController.login);
+router.post("/signup", Validation.validatesignup,authController.signup);
+router.post("/login", Validation.validateLogin,authController.login);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
-router.patch("/verify/:token", authController.verify);
+router.patch("/verify/:", authController.verify);
 module.exports = router;

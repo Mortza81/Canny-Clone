@@ -1,5 +1,5 @@
 const catchAsync = require("../utils/catchAsync");
-const AppError = require("../utils/AppError");
+const AppError = require("../utils/appError");
 const Interaction = require("../models/interactionModel");
 
 exports.addInteraction = catchAsync(async (req, res, next) => {
@@ -40,20 +40,28 @@ exports.deleteInteraction = catchAsync(async (req, res, next) => {
 
   await Interaction.findByIdAndDelete(interaction.id);
 
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     data: "null",
   });
 });
 exports.getAllLikes = catchAsync(async (req, res, next) => {
-  const likes = await Interaction.find({ target_type: "Comment" });
+  let filter={target_type: "Comment"}
+  if(req.params.commentId){
+    filter.target=req.params.commentId
+  }
+  const likes = await Interaction.find(filter);
   res.status(200).json({
     status: "success",
     data: likes,
   });
 });
 exports.getAllvotes = catchAsync(async (req, res, next) => {
-  const votes = await Interaction.find({ target_type: "Request" });
+  let filter={target_type: "Request"}
+  if(req.params.requestId){
+    filter.target=req.params.requestId
+  }
+  const votes = await Interaction.find(filter);
   res.status(200).json({
     status: "success",
     data: votes,
@@ -85,7 +93,7 @@ exports.deleteVote = catchAsync(async (req, res, next) => {
     return next(new AppError("There is no vote with this Id"));
   }
   await Interaction.findByIdAndDelete(vote.id);
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     data: "null",
   });
@@ -96,7 +104,7 @@ exports.deleteLike = catchAsync(async (req, res, next) => {
     return next(new AppError("There is no like with this Id"));
   }
   await Interaction.findByIdAndDelete(like.id);
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     data: "null",
   });
