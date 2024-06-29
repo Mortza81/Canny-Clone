@@ -11,7 +11,8 @@ const schema = {
     .messages({
       "any.only":
         "Status must be either: in progress, planned, or under review",
-    }).forbidden(),
+    })
+    .forbidden(),
   category: Joi.string().messages({
     "string.base": "Category must be a string",
   }),
@@ -30,7 +31,6 @@ exports.updateRequest = Joi.object(schema).fork(
   ["user", "description", "title"],
   (schema) => schema.optional(),
 );
-exports.setStatus=Joi.object(schema).fork(
-    ["user", "description", "title"],
-    (schema) => schema.optional(),
-).fork(['status'],(schema)=>schema.optional());
+exports.setStatus = Joi.object(schema)
+  .fork(["user", "description", "title"], (schema) => schema.optional())
+  .fork(["status"], (schema) => schema.optional());

@@ -46,9 +46,9 @@ exports.deleteInteraction = catchAsync(async (req, res, next) => {
   });
 });
 exports.getAllLikes = catchAsync(async (req, res, next) => {
-  let filter={target_type: "Comment"}
-  if(req.params.commentId){
-    filter.target=req.params.commentId
+  const filter = { target_type: "Comment" };
+  if (req.params.commentId) {
+    filter.target = req.params.commentId;
   }
   const likes = await Interaction.find(filter);
   res.status(200).json({
@@ -57,9 +57,9 @@ exports.getAllLikes = catchAsync(async (req, res, next) => {
   });
 });
 exports.getAllvotes = catchAsync(async (req, res, next) => {
-  let filter={target_type: "Request"}
-  if(req.params.requestId){
-    filter.target=req.params.requestId
+  const filter = { target_type: "Request" };
+  if (req.params.requestId) {
+    filter.target = req.params.requestId;
   }
   const votes = await Interaction.find(filter);
   res.status(200).json({

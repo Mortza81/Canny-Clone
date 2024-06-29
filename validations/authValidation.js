@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const { schema } = require("../models/userModel");
+
 const authValidation = {
   name: Joi.string().required().max(20).messages({
     "string.base": "Name must be a string",
@@ -24,12 +24,11 @@ const authValidation = {
     "any.only": "Role must be either admin or user",
   }),
 };
-exports.signup = Joi.object(authValidation)
-  .fork(["role"], (schema) =>
-    schema.forbidden().messages({
-      "any.unknown": "Not allowed field: role",
-    }),
-  )
+exports.signup = Joi.object(authValidation).fork(["role"], (schema) =>
+  schema.forbidden().messages({
+    "any.unknown": "Not allowed field: role",
+  }),
+);
 exports.login = Joi.object(authValidation).fork(
   ["name", "passwordConfirm"],
   (schema) => schema.optional(),

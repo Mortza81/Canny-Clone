@@ -1,57 +1,67 @@
 const { signup, login } = require("./authValidation");
 const { createComment, updateComment } = require("./commentValdiation");
-const {createRequest,updateRequest,setStatus}=require('./requestValidation')
+const {
+  createRequest,
+  updateRequest,
+  setStatus,
+} = require("./requestValidation");
 const AppError = require("../utils/appError");
+
 class Validation {
-  validatecreateComment(req,res,next) {
+  validatecreateComment(req, res, next) {
     const { error } = createComment.validate(req.body);
     if (error) {
       return next(new AppError(error.message, 400));
     }
-    next()
-
+    next();
   }
-  validateupdateComment(req,res,next){
+
+  validateupdateComment(req, res, next) {
     const { error } = updateComment.validate(req.body);
     if (error) {
       return next(new AppError(error.message, 400));
     }
-    next()
+    next();
   }
+
   validatesignup(req, res, next) {
     const { error } = signup.validate(req.body);
     if (error) {
       return next(new AppError(error.message, 400));
     }
-    next()
+    next();
   }
-  validateLogin(req,res,next){
+
+  validateLogin(req, res, next) {
     const { error } = login.validate(req.body);
     if (error) {
       return next(new AppError(error.message, 400));
     }
-    next()
+    next();
   }
-  validateupdateRequest(req,res,next){
+
+  validateupdateRequest(req, res, next) {
     const { error } = updateRequest.validate(req.body);
     if (error) {
       return next(new AppError(error.message, 400));
     }
-    next()
+    next();
   }
-  validateCreateRequest(req,res,next){
+
+  validateCreateRequest(req, res, next) {
     const { error } = createRequest.validate(req.body);
     if (error) {
       return next(new AppError(error.message, 400));
     }
-    next()
+    next();
   }
-  validateSetStatus(req,res,next){
+
+  validateSetStatus(req, res, next) {
     const { error } = setStatus.validate(req.body);
     if (error) {
       return next(new AppError(error.message, 400));
     }
-    next()
+    next();
   }
 }
 module.exports = new Validation();

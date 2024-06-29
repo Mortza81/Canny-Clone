@@ -112,8 +112,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError("invalid or exired token", 400));
   }
-  if(req.body.password!= req.body.passwordConfirm){
-    return next(new AppError('Your password and your passwordConfirm are not match',400))
+  if (req.body.password != req.body.passwordConfirm) {
+    return next(
+      new AppError("Your password and your passwordConfirm are not match", 400),
+    );
   }
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;

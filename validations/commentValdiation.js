@@ -1,4 +1,5 @@
 const Joi = require("joi");
+
 const schema = {
   user: Joi.string().required().messages({
     "string.base": "User ID must be a string",
