@@ -41,5 +41,5 @@ router.post("/signup", Validation.validatesignup, authController.signup);
 router.post("/login", Validation.validateLogin, authController.login);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
-router.patch("/verify/:", authController.verify);
+router.patch("/verify/:token", authController.verify);
 module.exports = router;
