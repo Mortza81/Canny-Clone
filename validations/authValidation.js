@@ -7,8 +7,9 @@ const authValidation = {
     "string.max": "Name must have less or equal then 20 characters",
   }),
   email: Joi.string()
-    .email({ tlds: { allow: false } })
+    .email({ tlds: { allow: false } }).required()
     .messages({
+      "any.required": "email is requied",
       "string.email": "Your email is not valid",
       "any.required": "Email is required",
     }),
