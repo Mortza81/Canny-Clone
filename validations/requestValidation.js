@@ -24,7 +24,9 @@ const schema = {
     "string.base": "User ID must be string",
     "any.required": "It must belongs to a user",
   }),
-  images: Joi.optional(),
+  images: Joi.array().optional().max(2).messages({
+    "array.max":"Maximum number of images exceeded. Only up to 2 images are allowed."
+  }),
 };
 exports.createRequest = Joi.object(schema);
 exports.updateRequest = Joi.object(schema).fork(

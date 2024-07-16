@@ -7,6 +7,7 @@ const sinon = require("sinon");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const app = require("../app");
 const { default: mongoose } = require("mongoose");
+
 jest.setTimeout(40000);
 describe("authentication test", () => {
   let server;
@@ -19,18 +20,16 @@ describe("authentication test", () => {
   beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create({
       binary: {
-        version: "7.0.8",
-        systemBinary:
-          "C:\\Program Files\\MongoDB\\Server\\7.0\\bin\\mongod.exe",
+        version: process.env.MONGODB_VERSION,
+        systemBinary: process.env.MONGODB_PATH,
       },
     });
-    server = app.listen(8000);
+    server = app.listen(7000);
     await mongoose.connect(mongoServer.getUri());
   });
   afterAll(async () => {
-    await server.close();
+    server.close();
     mongoose.disconnect();
-    mongoose.connection.close();
   });
   describe("signup tests", () => {
     it("should send an email if data is ok", async () => {

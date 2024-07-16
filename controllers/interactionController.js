@@ -12,7 +12,6 @@ exports.addInteraction = catchAsync(async (req, res, next) => {
     req.body.target = req.params.commentId;
   }
   const interaction = await Interaction.create(req.body);
-
   res.status(201).json({
     status: "success",
     data: {

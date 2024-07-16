@@ -21,19 +21,7 @@ function errordevelopment(err, req, res) {
     error: err,
   });
 }
-function handleMulterError(err) {
-  let message;
-  if (err.code === "LIMIT_FILE_SIZE") {
-    message = "File size is too large. Maximum size allowed is 5MB.";
-  } else if (err.code === "LIMIT_FILE_COUNT") {
-    message = "Maximum number of files exceeded. Only 10 files are allowed.";
-  } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
-    message = `You can only upload two images.`;
-  } else {
-    message = "An error occurred during file upload.";
-  }
-  return new AppError(message, 400);
-}
+
 function handleCastError(err) {
   return new AppError(`Invalid ${err.path}: ${err.value}`, 404);
 }
@@ -58,9 +46,9 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
-  if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
+  if (process.env.NODE_ENV === "development" ) {
     errordevelopment(err, req, res);
-  } else if (process.env.NODE_ENV === "production") {
+  } else if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
     if (err.name === "CastError") {
       err = handleCastError(err);
     }
