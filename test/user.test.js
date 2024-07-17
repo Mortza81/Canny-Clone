@@ -1,12 +1,12 @@
 const request = require("supertest");
-const Email = require("../utils/email");
 const bcrypt = require("bcrypt");
-const User = require("../models/userModel");
-const jwt=require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 const sinon = require("sinon");
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const app = require("../app");
 const { default: mongoose } = require("mongoose");
+const app = require("../app");
+const User = require("../models/userModel");
+const Email = require("../utils/email");
 
 jest.setTimeout(40000);
 describe("authentication test", () => {
@@ -18,12 +18,7 @@ describe("authentication test", () => {
     }
   });
   beforeAll(async () => {
-    const mongoServer = await MongoMemoryServer.create({
-      binary: {
-        version: process.env.MONGODB_VERSION,
-        systemBinary: process.env.MONGODB_PATH,
-      },
-    });
+    const mongoServer = await MongoMemoryServer.create();
     server = app.listen(7000);
     await mongoose.connect(mongoServer.getUri());
   });
@@ -207,7 +202,7 @@ describe("authentication test", () => {
         name: "morteza",
         email: "morteza@example.com",
         password: "test1234",
-        verified:true
+        verified: true,
       });
     });
     it("should throw an error if user wants to update password", async () => {

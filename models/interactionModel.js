@@ -8,7 +8,7 @@ const interactionSchema = new mongoose.Schema({
     type: String,
     enum: {
       values: ["Request", "Comment"],
-      message: "type must be vote or like",
+      message: "target_type must be Request or Comment",
     },
   },
   user: {

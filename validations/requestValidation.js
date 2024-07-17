@@ -25,7 +25,8 @@ const schema = {
     "any.required": "It must belongs to a user",
   }),
   images: Joi.array().optional().max(2).messages({
-    "array.max":"Maximum number of images exceeded. Only up to 2 images are allowed."
+    "array.max":
+      "Maximum number of images exceeded. Only up to 2 images are allowed.",
   }),
 };
 exports.createRequest = Joi.object(schema);

@@ -27,7 +27,7 @@ const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter,
 });
-exports.uploadCommentImages = upload.fields([{ name: "images", maxCount: 2 }]);
+exports.uploadCommentImages = upload.fields([{ name: "images" }]);
 exports.resizeCommentImages = catchAsync(async (req, res, next) => {
   if (!req.files || !req.files.images) return next();
   req.body.images = [];

@@ -1,6 +1,5 @@
 const express = require("express");
 const commentController = require("../controllers/commentController");
-const interactionController = require("../controllers/interactionController");
 const authController = require("../controllers/authController");
 const Validation = require("../validations/Validation");
 

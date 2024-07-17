@@ -1,4 +1,3 @@
-const multer = require("multer");
 const AppError = require("../utils/appError");
 
 function errorproduction(err, req, res) {
@@ -8,7 +7,6 @@ function errorproduction(err, req, res) {
       message: err.message,
     });
   }
-  console.log(err);
   return res.status(err.statusCode).json({
     status: "error",
     message: "Somthing went wrong!",
@@ -26,11 +24,7 @@ function handleCastError(err) {
   return new AppError(`Invalid ${err.path}: ${err.value}`, 404);
 }
 function handleDuplicateError(err) {
-  const value = err.message.match(/"(.*?)"/)[1];
-  return new AppError(
-    `Duplicated field, value: ${value}, use another value`,
-    400,
-  );
+  return new AppError(`Duplicated field, Please use another value`, 400);
 }
 function handleValidationError(err) {
   let errorsString = "";
@@ -46,9 +40,12 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
-  if (process.env.NODE_ENV === "development" ) {
+  if (process.env.NODE_ENV === "development") {
     errordevelopment(err, req, res);
-  } else if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
+  } else if (
+    process.env.NODE_ENV === "production" ||
+    process.env.NODE_ENV === "test"
+  ) {
     if (err.name === "CastError") {
       err = handleCastError(err);
     }
@@ -63,9 +60,6 @@ module.exports = (err, req, res, next) => {
     }
     if (err.name === "TokenExpiredError") {
       err = handleJWTExpiredError();
-    }
-    if (err instanceof multer.MulterError) {
-      err = handleMulterError(err);
     }
     errorproduction(err, req, res);
   }

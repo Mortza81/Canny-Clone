@@ -16,7 +16,10 @@ const schema = {
     "string.empty": "Comment body cannot be empty",
     "any.required": "Your comment should have a body text",
   }),
-  images: Joi.optional(),
+  images: Joi.array().optional().max(2).messages({
+    "array.max":
+      "Maximum number of images exceeded. Only up to 2 images are allowed.",
+  }),
 };
 exports.createComment = Joi.object(schema);
 exports.updateComment = Joi.object(schema).fork(
