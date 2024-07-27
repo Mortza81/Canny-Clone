@@ -4,7 +4,6 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 const rateLimit = require("express-rate-limit");
 const compression = require("compression");
-const xss = require("xss-clean");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const path = require("path");
@@ -27,15 +26,12 @@ if (process.env.NODE_ENV === "development") {
 app.use(compression());
 // preventing nosql injection
 app.use(mongoSanitize());
-// preventing inserting html
-app.use(xss());
 // set security http headers
 app.use(
   helmet({
     contentSecurityPolicy: false,
   }),
 );
-// app.use(express.static(''))
 // limit requests from one IP
 const limiter = rateLimit({
   max: 100,
@@ -46,6 +42,13 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 app.use(express.json({ limit: "10kb" }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/", (req, res, next) => {
+  res.json({
+    status: "success",
+    message:
+      "Welcome to Canny's Clone, See the documentation on: https://documenter.getpostman.com/view/34412693/2sA3XY6dap",
+  });
+});
 app.use("/api/v1/users", require("./router/userRouter"));
 app.use("/api/v1/requests", require("./router/requestRouter"));
 app.use("/api/v1/comments", require("./router/commentRouter"));

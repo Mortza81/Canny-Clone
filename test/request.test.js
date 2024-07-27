@@ -174,5 +174,6 @@ describe("request tests", () => {
       .set("Authorization", `Bearer ${usertoken2}`)
       .expect(400);
     expect(res.body.message).toBe("Duplicated field, Please use another value");
+    
   });
 });
