@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const express = require("express");
-const morgan = require("morgan");
 const dotenv = require("dotenv");
 const rateLimit = require("express-rate-limit");
 const compression = require("compression");
@@ -9,20 +8,16 @@ const helmet = require("helmet");
 const path = require("path");
 const fs = require("fs");
 const AppError = require("./utils/appError");
-
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
-  { flags: "a" },
-);
+const logger = require("./logger");
 const app = express();
 const globalErrorHandler = require("./controllers/errorController");
 
 dotenv.config();
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
-} else {
-  app.use(morgan("combined", { stream: accessLogStream }));
-}
+
+app.use((req, res, next) => {
+  logger.info(`Request received: ${req.method} ${req.url}`);
+  next();
+});
 app.use(compression());
 // preventing nosql injection
 app.use(mongoSanitize());
@@ -56,6 +51,10 @@ app.use("/api/v1/interactions", require("./router/interactionsRouter"));
 
 app.all("*", (req, res, next) => {
   next(new AppError(`${req.originalUrl} not found`, 404));
+});
+app.use((err, req, res, next) => {
+  logger.error(`${err.statusCode} ${req.method} ${req.originalUrl} ${err.message} - ${err.stack}`);
+  next(err);
 });
 app.use(globalErrorHandler);
 module.exports = app;
